@@ -1,0 +1,12 @@
+database:
+  name: ${DATABASE_NAME:test}
+  logging: ${DATABASE_LOGGING:false}
+
+telegram:
+  user:
+    name: ${TELEGRAM_USER_NAME}
+    phone: ${TELEGRAM_USER_PHONE}
+    api_id: ${TELEGRAM_USER_API_ID}
+    api_hash: ${TELEGRAM_USER_API_HASH}
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN}
