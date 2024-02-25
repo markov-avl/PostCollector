@@ -1,1 +1,3 @@
-from .telegram_chat_service import TelegramChatService
+from .telegram_channel_service import TelegramChannelService
+from .telegram_subscription_service import TelegramSubscriptionService
+from .telegram_user_service import TelegramUserService

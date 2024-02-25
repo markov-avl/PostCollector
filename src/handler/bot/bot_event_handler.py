@@ -1,11 +1,17 @@
-from abc import ABC
-
-from aiogram.filters import Command
+from abc import ABC, abstractmethod
+from typing import Any
 
 from src.handler import EventHandler
+
+from .bot_handler_type import BotHandlerType
 
 
 class BotEventHandler(EventHandler, ABC):
 
-    def params(self) -> list[Command]:
+    @abstractmethod
+    def params(self) -> list[Any]:
+        ...
+
+    @abstractmethod
+    def type(self) -> BotHandlerType:
         ...

@@ -2,10 +2,10 @@ import asyncio
 
 from aiogram import Dispatcher
 from loguru import logger
-
 from puripy.decorator import post_init, pre_del, component
+
 from src.telegram import TelegramBot, TelegramClient
-from src.handler.bot import BotEventHandler
+from src.handler.bot import BotEventHandler, BotHandlerType
 from src.handler.client import ClientEventHandler
 
 
@@ -26,9 +26,16 @@ class BotManager:
     @post_init
     def register_handlers(self) -> None:
         for handler in self._bot_handlers:
-            self._dispatcher.message(*handler.params())(handler.handle)
+            if handler.type() == BotHandlerType.MESSAGE:
+                self._dispatcher.message(*handler.params())(handler.handle)
+                logger.debug("[BOT] Message handler '{}' registered", handler.__class__.__name__)
+            elif handler.type() == BotHandlerType.CALLBACK_QUERY:
+                self._dispatcher.callback_query(*handler.params())(handler.handle)
+                logger.debug("[BOT] Callback query handler '{}' registered", handler.__class__.__name__)
+
         for handler in self._client_handlers:
             self._telegram_client.on(*handler.params())(handler.handle)
+            logger.debug("[CLIENT] Message handler '{}' registered", handler.__class__.__name__)
 
     async def start(self) -> None:
         tasks = [

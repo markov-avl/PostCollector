@@ -1,1 +1,5 @@
 from .repository import Repository
+
+from .telegram_channel_repository import TelegramChannelRepository
+from .telegram_subscription_repository import TelegramSubscriptionRepository
+from .telegram_user_repository import TelegramUserRepository
