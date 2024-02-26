@@ -1,6 +1,7 @@
-from enum import Enum, auto
+from enum import IntEnum, unique
 
 
-class BotHandlerType(Enum):
-    MESSAGE = auto()
-    CALLBACK_QUERY = auto()
+@unique
+class BotHandlerType(IntEnum):
+    MESSAGE = 1
+    CALLBACK_QUERY = 2

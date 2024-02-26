@@ -1,11 +1,14 @@
 from typing import Any
-
+import asyncio
 from aiogram import types, F
 from loguru import logger
 from puripy.decorator import component
+from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.tl.types import InputChannel, Channel, InputPeerChannel, PeerChannel
 
 from src.service import TelegramUserService, TelegramChannelService, TelegramSubscriptionService
 from src.database.entity import TelegramUser, TelegramChannel, TelegramSubscription
+from src.telegram import TelegramClient, TelegramBot
 
 from .bot_handler_type import BotHandlerType
 from .bot_event_handler import BotEventHandler
@@ -17,10 +20,14 @@ class OnChannelSelection(BotEventHandler):
     def __init__(self,
                  telegram_user_service: TelegramUserService,
                  telegram_channel_service: TelegramChannelService,
-                 telegram_subscription_service: TelegramSubscriptionService):
+                 telegram_subscription_service: TelegramSubscriptionService,
+                 telegram_bot: TelegramBot,
+                 telegram_client: TelegramClient):
         self._telegram_user_service = telegram_user_service
         self._telegram_channel_service = telegram_channel_service
         self._telegram_subscription_service = telegram_subscription_service
+        self._telegram_bot = telegram_bot
+        self._telegram_client = telegram_client
 
     def params(self) -> list[Any]:
         return [F.chat_shared]
@@ -70,5 +77,8 @@ class OnChannelSelection(BotEventHandler):
             telegram_channel = TelegramChannel()
             telegram_channel.chat_id = chat_id
             await self._telegram_channel_service.save(telegram_channel)
+            peer_channel = PeerChannel(chat_id)
+            channel = await self._telegram_client.get_input_entity(peer_channel)
+            await self._telegram_client(JoinChannelRequest(channel))
 
         return telegram_channel

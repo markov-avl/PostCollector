@@ -14,12 +14,14 @@ from .bot_event_handler import BotEventHandler
 @component
 class OnStartHandler(BotEventHandler):
     MESSAGE = """
-        %s!
-        
-        Я умею собирать новости из твоих подписок в одно место: в этот чат.
-        
-        Ты можешь выбрать каналы, из которых хочешь собирать оповещения, а также изменять этот список каналов.
-    """
+            %s!
+
+            Я умею собирать новости из списка твоих каналов в одно место: в этот чат.
+
+            Тебе нужно лишь сказать, какие каналы мне нужно слушать, и я буду оттуда пересылать тебе новости:
+            /subscribe - подписаться на канал
+            /edit - отредактировать текущие подписки
+        """
 
     def __init__(self, telegram_user_service: TelegramUserService):
         self._telegram_user_service = telegram_user_service
@@ -41,17 +43,4 @@ class OnStartHandler(BotEventHandler):
             await self._telegram_user_service.save(telegram_user)
             answer = TextUtility.remove_indents(self.MESSAGE) % "Привет"
 
-        reply_markup = types.ReplyKeyboardMarkup(
-            resize_keyboard=True,
-            keyboard=[
-                [types.KeyboardButton(text="Выбрать канал", request_chat=types.KeyboardButtonRequestChat(request_id=1,
-                                                                                                         chat_is_channel=True))],
-                [types.KeyboardButton(text="Выбранные каналы (просмотр и редактирование)")]
-            ]
-        )
-
-        await message.answer(
-            text=answer,
-            allow_sending_without_reply=False,
-            reply_markup=reply_markup
-        )
+        await message.answer(text=answer)
