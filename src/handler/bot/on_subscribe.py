@@ -3,12 +3,11 @@ from aiogram.filters import Command
 from loguru import logger
 from puripy.decorator import component
 
-from src.database.entity import TelegramUser
 from src.service import TelegramUserService
+from src.database.enum import TelegramUserState
 
 from .bot_handler_type import BotHandlerType
 from .bot_event_handler import BotEventHandler
-from ...database.enum import TelegramUserState
 
 
 @component

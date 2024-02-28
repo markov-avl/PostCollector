@@ -9,6 +9,7 @@ from telethon.tl.types import InputChannel, Channel, InputPeerChannel, PeerChann
 from src.service import TelegramUserService, TelegramChannelService, TelegramSubscriptionService
 from src.database.entity import TelegramUser, TelegramChannel, TelegramSubscription
 from src.telegram import TelegramClient, TelegramBot
+from src.filter import SelectChannelFilter
 
 from .bot_handler_type import BotHandlerType
 from .bot_event_handler import BotEventHandler
@@ -22,15 +23,17 @@ class OnChannelSelection(BotEventHandler):
                  telegram_channel_service: TelegramChannelService,
                  telegram_subscription_service: TelegramSubscriptionService,
                  telegram_bot: TelegramBot,
-                 telegram_client: TelegramClient):
+                 telegram_client: TelegramClient,
+                 select_channel_filter: SelectChannelFilter):
         self._telegram_user_service = telegram_user_service
         self._telegram_channel_service = telegram_channel_service
         self._telegram_subscription_service = telegram_subscription_service
         self._telegram_bot = telegram_bot
         self._telegram_client = telegram_client
+        self._select_channel_filter = select_channel_filter
 
     def params(self) -> list[Any]:
-        return [F.chat_shared]
+        return [self._select_channel_filter]
 
     def type(self) -> BotHandlerType:
         return BotHandlerType.MESSAGE
@@ -38,8 +41,8 @@ class OnChannelSelection(BotEventHandler):
     async def handle(self, message: types.Message) -> None:
         logger.info("ChannelSelection event from {}", message.from_user.username)
 
-        telegram_user = await self._get_telegram_user(message.chat.id)
-        telegram_channel = await self._get_telegram_channel(message.chat_shared.chat_id)
+        telegram_user = await self._telegram_user_service.get_or_create_by_chat_id(message.chat.id)
+
 
         telegram_subscription = await self._telegram_subscription_service \
             .get_by_telegram_user_and_telegram_channel(telegram_user, telegram_channel)
@@ -50,15 +53,18 @@ class OnChannelSelection(BotEventHandler):
                 await message.answer("Ты уже подал заявку на подписку, нужно немного подождать")
             return
 
-        telegram_subscription = TelegramSubscription()
-        telegram_subscription.telegram_user = telegram_user
-        telegram_subscription.telegram_channel = telegram_channel
-        await self._telegram_subscription_service.save(telegram_subscription)
 
-        if telegram_channel.subscribed:
-            await message.answer("Ты успешно подписался на канал!")
-        else:
-            await message.answer("Заявка на подписку подана успешно!")
+
+
+        # telegram_subscription = TelegramSubscription()
+        # telegram_subscription.telegram_user = telegram_user
+        # telegram_subscription.telegram_channel = telegram_channel
+        # await self._telegram_subscription_service.save(telegram_subscription)
+        #
+        # if telegram_channel.subscribed:
+        #     await message.answer("Ты успешно подписался на канал!")
+        # else:
+        #     await message.answer("Заявка на подписку подана успешно!")
 
     async def _get_telegram_user(self, chat_id: int) -> TelegramUser:
         telegram_user = await self._telegram_user_service.get_by_chat_id(chat_id)
@@ -71,7 +77,7 @@ class OnChannelSelection(BotEventHandler):
         return telegram_user
 
     async def _get_telegram_channel(self, chat_id: int) -> TelegramChannel:
-        telegram_channel = await self._telegram_channel_service.get_by_chat_id(chat_id)
+        telegram_channel = await self._telegram_channel_service.get_by_name(chat_id)
 
         if telegram_channel is None:
             telegram_channel = TelegramChannel()
