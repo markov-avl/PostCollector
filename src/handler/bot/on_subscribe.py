@@ -25,8 +25,8 @@ class OnSubscribe(BotEventHandler):
     async def handle(self, message: types.Message) -> None:
         logger.debug("SubscribeCommand from {}", message.from_user.username)
 
-        telegram_user = await self._telegram_user_service.get_or_create_by_chat_id(message.chat.id)
+        telegram_user = await self._telegram_user_service.get_by_chat_id_or_create(message.chat.id)
         telegram_user.state = TelegramUserState.CHANNEL_SELECTION
         await self._telegram_user_service.update(telegram_user)
 
-        await message.answer(text="Отправь @channelname канала, на который хочешь подписаться")
+        await message.answer(text="Отправь ссылку или @channelname канала, на который хочешь подписаться")

@@ -1,6 +1,6 @@
 from puripy.decorator import component
 
-from src.database.entity import TelegramUser
+from src.database.entity import TelegramUser, TelegramChannel
 from src.database.repository import TelegramUserRepository
 
 
@@ -16,7 +16,7 @@ class TelegramUserService:
     async def get_by_chat_id(self, chat_id: int) -> TelegramUser | None:
         return await self._telegram_user_repository.find_by_chat_id(chat_id)
 
-    async def get_or_create_by_chat_id(self, chat_id: int) -> TelegramUser:
+    async def get_by_chat_id_or_create(self, chat_id: int) -> TelegramUser:
         telegram_user = await self.get_by_chat_id(chat_id)
 
         if telegram_user is None:
@@ -25,6 +25,9 @@ class TelegramUserService:
             await self._telegram_user_repository.save(telegram_user)
 
         return telegram_user
+
+    async def get_by_subscribed_to_telegram_channel(self, telegram_channel: TelegramChannel) -> list[TelegramUser]:
+        return await self._telegram_user_repository.find_by_subscribed_to_telegram_channel(telegram_channel)
 
     async def save(self, telegram_user: TelegramUser) -> None:
         if await self.get_by_chat_id(telegram_user.chat_id):

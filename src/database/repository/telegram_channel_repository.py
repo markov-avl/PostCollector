@@ -20,11 +20,3 @@ class TelegramChannelRepository(Repository[TelegramChannel]):
             .where(TelegramChannel.chat_id == chat_id)
         )
         return await self._fetch(statement)
-
-    async def find_by_name(self, name: str) -> TelegramChannel | None:
-        # noinspection PyTypeChecker
-        statement = (
-            select(TelegramChannel)
-            .where(TelegramChannel.name == name)
-        )
-        return await self._fetch(statement)
