@@ -1,13 +1,12 @@
-from typing import Any
 from aiogram import types
+from aiogram.filters import Filter
 from loguru import logger
 from puripy.decorator import component
-import asyncio
 
-from telethon.errors import UsernameInvalidError
+from telethon.errors import UsernameInvalidError, UserAlreadyParticipantError, InviteRequestSentError
 from telethon.tl.functions.channels import JoinChannelRequest
-from telethon.tl.functions.messages import ImportChatInviteRequest
-from telethon.tl.types import Channel
+from telethon.tl.functions.messages import ImportChatInviteRequest, CheckChatInviteRequest
+from telethon.tl.types import Channel, ChatInvite, ChatInviteAlready, ChatInvitePeek
 
 from src.service import TelegramUserService, TelegramChannelService, TelegramSubscriptionService
 from src.database.entity import TelegramSubscription
@@ -37,7 +36,7 @@ class OnChannelSelection(BotEventHandler):
         self._telegram_client = telegram_client
         self._select_channel_filter = select_channel_filter
 
-    def params(self) -> list[Any]:
+    def params(self) -> list[Filter]:
         return [self._select_channel_filter]
 
     def type(self) -> BotHandlerType:
@@ -47,18 +46,37 @@ class OnChannelSelection(BotEventHandler):
         logger.info("ChannelSelection event from {}", message.from_user.username)
 
         if not TelegramUtility.can_be_channel_identifier(message.text):
-            await message.answer("Я более чем уверен, что я не смогу найти канал по такому запросу. Попробуй снова")
+            await message.answer("Невозможно найти канал по такому запросу. Попробуйте снова")
             return
+
+        if TelegramUtility.is_invite_link(message.text):
+            invite_link_hash = TelegramUtility.parse_invite_link_hash(message.text)
+            chat_invite = await self._telegram_client(CheckChatInviteRequest(invite_link_hash))
+
+            if isinstance(chat_invite, ChatInvite):
+                logger.debug("{} is invite to chat: {}", message.text.strip(), chat_invite)
+
+                try:
+                    await self._telegram_client(ImportChatInviteRequest(invite_link_hash))
+                except UserAlreadyParticipantError:
+                    logger.debug("Client is already subscribed via: {}", message.text.strip())
+                except InviteRequestSentError:
+                    logger.debug("Sent join request via: {}", message.text.strip())
+
+            elif isinstance(chat_invite, ChatInviteAlready):
+                logger.debug("{} is already invite to chat: {}", message.text.strip(), chat_invite)
+            elif isinstance(chat_invite, ChatInvitePeek):
+                logger.debug("{} is peek invite to chat: {}", message.text.strip(), chat_invite)
 
         try:
             channel = await self._telegram_client.get_entity(message.text)
-            logger.debug(f"Found entity: {channel}")
+            logger.debug("Found entity: {}", channel)
         except (UsernameInvalidError, ValueError):
-            await message.answer("Ничего не могу найти. Ты уверен в действительности введенных данных? Попробуй снова")
+            await message.answer("Невозможно найти канал по такому запросу. Попробуйте снова")
             return
 
         if not isinstance(channel, Channel):
-            await message.answer("Объект, найденный по данному запросу, не является каналом. Попробуй снова")
+            await message.answer("Объект, найденный по данному запросу, не является каналом. Попробуйте снова")
             return
 
         # The user is 100% exist if this handle executed
@@ -67,11 +85,15 @@ class OnChannelSelection(BotEventHandler):
         telegram_subscription = await self._telegram_subscription_service \
             .get_by_telegram_user_and_telegram_channel(telegram_user, telegram_channel)
 
+        if not channel.left and not telegram_channel.subscribed:
+            telegram_channel.subscribed = True
+            await self._telegram_channel_service.update(telegram_channel)
+
         if telegram_subscription:
             if telegram_channel.subscribed:
-                await message.answer("Ты уже подписан на этот канал")
+                await message.answer("Подписка на этот канал уже совершена")
             else:
-                await message.answer("Ты уже подал заявку на подписку, нужно подождать подтверждения")
+                await message.answer("Подписка на этот канал уже подана, нужно дождаться подтверждения")
             return
 
         telegram_subscription = TelegramSubscription()
@@ -83,8 +105,8 @@ class OnChannelSelection(BotEventHandler):
         await self._telegram_user_service.update(telegram_user)
 
         if telegram_channel.subscribed:
-            await message.answer(f"Ты успешно подписался на {channel.title}!")
+            await message.answer(f"Подписка на «{channel.title}» успешно совершена!")
         else:
             # noinspection PyTypeChecker
             await self._telegram_client(JoinChannelRequest(channel))
-            await message.answer("Заявка на подписку подана успешно!")
+            await message.answer(f"Заявка на «{channel.title}» успешно подана!")

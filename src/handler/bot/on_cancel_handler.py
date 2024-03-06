@@ -32,4 +32,4 @@ class OnCancelHandler(BotEventHandler):
             await self._telegram_user_service.update(telegram_user)
             await message.answer("Выбор канала отменен")
         else:
-            await message.answer("Ты и так не был в режиме выбора канала")
+            await message.answer("Режим выбора канала и так был отключен")

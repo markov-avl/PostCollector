@@ -36,6 +36,7 @@ class OnIncomingMessageHandler(ClientEventHandler):
             return
 
         try:
-            await self._telegram_client.forward_messages(self._telegram_bot.id, event.message)
+            bot = await self._telegram_client.get_entity(self._telegram_bot.id)
+            await self._telegram_client.forward_messages(bot, event.message)
         except ValueError as e:
-            logger.error("Forward message error", e)
+            logger.error("Forward message error: {}", e)
