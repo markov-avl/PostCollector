@@ -27,7 +27,7 @@ class OnUpdateChannelHandler(ClientEventHandler):
         return [events.Raw(types=UpdateChannel)]
 
     async def handle(self, event: UpdateChannel) -> None:
-        logger.debug(f"Telegram UpdateChannel event: {event}")
+        logger.debug(f"UpdateChannel event: {event}")
 
         telegram_channel = await self._telegram_channel_service.get_by_chat_id(event.channel_id)
         if telegram_channel is None:

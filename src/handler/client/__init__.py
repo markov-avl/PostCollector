@@ -1,3 +1,4 @@
 from .client_event_handler import ClientEventHandler
 
+from .on_incoming_message_handler import OnIncomingMessageHandler
 from .on_update_channel_handler import OnUpdateChannelHandler

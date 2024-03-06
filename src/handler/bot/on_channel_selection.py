@@ -6,6 +6,7 @@ import asyncio
 
 from telethon.errors import UsernameInvalidError
 from telethon.tl.functions.channels import JoinChannelRequest
+from telethon.tl.functions.messages import ImportChatInviteRequest
 from telethon.tl.types import Channel
 
 from src.service import TelegramUserService, TelegramChannelService, TelegramSubscriptionService
