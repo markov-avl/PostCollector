@@ -27,14 +27,14 @@ class BotManager:
     def register_handlers(self) -> None:
         for handler in self._bot_handlers:
             if handler.type() == BotHandlerType.MESSAGE:
-                self._dispatcher.message(*handler.params())(handler.handle)
+                self._dispatcher.message.register(handler.handle, *handler.filters())
                 logger.debug("[BOT] Message handler '{}' registered", handler.__class__.__name__)
             elif handler.type() == BotHandlerType.CALLBACK_QUERY:
-                self._dispatcher.callback_query(*handler.params())(handler.handle)
+                self._dispatcher.callback_query.register(handler.handle, *handler.filters())
                 logger.debug("[BOT] Callback query handler '{}' registered", handler.__class__.__name__)
 
         for handler in self._client_handlers:
-            self._telegram_client.on(*handler.params())(handler.handle)
+            self._telegram_client.on(*handler.filters())(handler.handle)
             logger.debug("[CLIENT] Message handler '{}' registered", handler.__class__.__name__)
 
     async def start(self) -> None:

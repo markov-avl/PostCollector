@@ -16,7 +16,7 @@ class OnSubscribe(BotEventHandler):
     def __init__(self, telegram_user_service: TelegramUserService):
         self._telegram_user_service = telegram_user_service
 
-    def params(self) -> list[Command]:
+    def filters(self) -> list[Command]:
         return [Command("subscribe")]
 
     def type(self) -> BotHandlerType:

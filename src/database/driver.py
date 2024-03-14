@@ -48,7 +48,7 @@ class Driver:
 
     def _get_session(self) -> AsyncSession:
         # noinspection PyTypeChecker
-        return sessionmaker(self._engine, class_=AsyncSession, expire_on_commit=False)()
+        return sessionmaker(self._engine, class_=AsyncSession, autoflush=True, expire_on_commit=False)()
 
     @post_init
     async def connect(self) -> None:

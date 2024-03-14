@@ -9,7 +9,7 @@ from .bot_handler_type import BotHandlerType
 class BotEventHandler(EventHandler, ABC):
 
     @abstractmethod
-    def params(self) -> list[Any]:
+    def filters(self) -> list[Any]:
         ...
 
     @abstractmethod

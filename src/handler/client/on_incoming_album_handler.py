@@ -5,13 +5,13 @@ from puripy.decorator import component
 
 from src.telegram import TelegramClient, TelegramBot
 from src.service import TelegramChannelService, TelegramUserService
-from src.utility import SerializationUtility
 
 from .client_event_handler import ClientEventHandler
+from ...utility import SerializationUtility
 
 
 @component
-class OnIncomingMessageHandler(ClientEventHandler):
+class OnIncomingAlbumHandler(ClientEventHandler):
 
     def __init__(self,
                  telegram_client: TelegramClient,
@@ -23,17 +23,13 @@ class OnIncomingMessageHandler(ClientEventHandler):
         self._telegram_user_service = telegram_user_service
         self._telegram_channel_service = telegram_channel_service
 
-    def filters(self) -> list[events.NewMessage]:
-        return [events.NewMessage(incoming=True, outgoing=False)]
+    def filters(self) -> list[events.Album]:
+        return [events.Album()]
 
-    async def handle(self, event: events.NewMessage.Event) -> None:
-        logger.debug("IncomingMessage event: {}", SerializationUtility.try_to_json(event))
+    async def handle(self, event: events.Album.Event) -> None:
+        logger.debug("IncomingAlbum event: {}", SerializationUtility.try_to_json(event))
 
         if not event.is_channel:
-            return
-
-        # It means that album was sent, it will be handled by album handler
-        if event.message.grouped_id:
             return
 
         telegram_channel = await self._telegram_channel_service.get_by_chat_id(event.chat.id)
@@ -47,6 +43,6 @@ class OnIncomingMessageHandler(ClientEventHandler):
             return
 
         try:
-            await event.message.forward_to(bot)
+            await event.forward_to(bot)
         except ValueError as e:
-            logger.error("Forward message error: {}", e)
+            logger.error("Forward album error: {}", e)

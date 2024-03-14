@@ -1,3 +1,4 @@
+from .telegram_album_forward_service import TelegramAlbumForwardService
 from .telegram_channel_service import TelegramChannelService
 from .telegram_subscription_service import TelegramSubscriptionService
 from .telegram_user_service import TelegramUserService

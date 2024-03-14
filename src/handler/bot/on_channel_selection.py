@@ -36,7 +36,7 @@ class OnChannelSelection(BotEventHandler):
         self._telegram_client = telegram_client
         self._select_channel_filter = select_channel_filter
 
-    def params(self) -> list[Filter]:
+    def filters(self) -> list[Filter]:
         return [self._select_channel_filter]
 
     def type(self) -> BotHandlerType:
