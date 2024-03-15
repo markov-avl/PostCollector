@@ -35,7 +35,7 @@ class OnUpdateChannelHandler(ClientEventHandler):
             return
 
         channel: Channel = await self._telegram_client.get_entity(event.channel_id)
-        logger.debug(f"Telegram channel with update: {channel}")
+        logger.debug("Telegram channel with update: {}", SerializationUtility.try_to_json(channel))
 
         if channel.left or telegram_channel.subscribed:
             return

@@ -10,4 +10,4 @@ telegram:
     api_hash: ${TELEGRAM_USER_API_HASH}
   bot:
     token: ${TELEGRAM_BOT_TOKEN}
-    album_forward_pause: ${TELEGRAM_BOT_ALBUM_FORWARD_PAUSE:30}
+    album_forward_pause: ${TELEGRAM_BOT_ALBUM_FORWARD_PAUSE:20}

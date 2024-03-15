@@ -46,7 +46,7 @@ class OnChannelSelection(BotEventHandler):
         logger.info("ChannelSelection event from {}", message.from_user.username)
 
         if not TelegramUtility.can_be_channel_identifier(message.text):
-            await message.answer("Невозможно найти канал по такому запросу. Попробуйте снова")
+            await message.answer("Невозможно найти канал по такому запросу. Проверьте введенные данные")
             return
 
         if TelegramUtility.is_invite_link(message.text):
@@ -89,9 +89,14 @@ class OnChannelSelection(BotEventHandler):
             telegram_channel.subscribed = True
             await self._telegram_channel_service.update(telegram_channel)
 
+        if telegram_channel.name == "Unknown":
+            telegram_channel.name = channel.title
+            telegram_channel.joined_by = message.text
+            await self._telegram_channel_service.update(telegram_channel)
+
         if telegram_subscription:
             if telegram_channel.subscribed:
-                await message.answer("Подписка на этот канал уже совершена")
+                await message.answer("Подписка на этот канал уже оформлена")
             else:
                 await message.answer("Подписка на этот канал уже подана, нужно дождаться подтверждения")
             return
@@ -105,7 +110,7 @@ class OnChannelSelection(BotEventHandler):
         await self._telegram_user_service.update(telegram_user)
 
         if telegram_channel.subscribed:
-            await message.answer(f"Подписка на «{channel.title}» успешно совершена!")
+            await message.answer(f"Подписка на «{channel.title}» успешно оформлена!")
         else:
             # noinspection PyTypeChecker
             await self._telegram_client(JoinChannelRequest(channel))
