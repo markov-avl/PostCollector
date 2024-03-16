@@ -1,6 +1,5 @@
 from loguru import logger
 from telethon import events
-
 from puripy.decorator import component
 
 from src.telegram import TelegramClient, TelegramBot

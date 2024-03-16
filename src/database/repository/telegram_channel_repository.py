@@ -2,7 +2,7 @@ from sqlalchemy import select
 from puripy.decorator import component
 
 from src.database import Driver
-from src.database.entity import TelegramChannel
+from src.database.entity import TelegramChannel, TelegramUser, TelegramSubscription
 
 from .repository import Repository
 
@@ -20,3 +20,11 @@ class TelegramChannelRepository(Repository[TelegramChannel]):
             .where(TelegramChannel.chat_id == chat_id)
         )
         return await self._fetch(statement)
+
+    async def find_by_telegram_user_subscriptions(self, telegram_user: TelegramUser) -> list[TelegramChannel]:
+        statement = (
+            select(TelegramChannel)
+            .join(TelegramSubscription)
+            .where(TelegramSubscription.telegram_user == telegram_user)
+        )
+        return await self._fetch_all(statement)

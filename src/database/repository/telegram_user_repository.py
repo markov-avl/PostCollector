@@ -21,7 +21,7 @@ class TelegramUserRepository(Repository[TelegramUser]):
         )
         return await self._fetch(statement)
 
-    async def find_by_subscribtion_to_telegram_channel(self, telegram_channel: TelegramChannel) -> list[TelegramUser]:
+    async def find_by_subscription_to_telegram_channel(self, telegram_channel: TelegramChannel) -> list[TelegramUser]:
         # noinspection PyTypeChecker
         statement = (
             select(TelegramUser)

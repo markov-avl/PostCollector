@@ -26,8 +26,8 @@ class TelegramUserService:
 
         return telegram_user
 
-    async def get_by_subscribtion_to_telegram_channel(self, telegram_channel: TelegramChannel) -> list[TelegramUser]:
-        return await self._telegram_user_repository.find_by_subscribtion_to_telegram_channel(telegram_channel)
+    async def get_by_subscription_to_telegram_channel(self, telegram_channel: TelegramChannel) -> list[TelegramUser]:
+        return await self._telegram_user_repository.find_by_subscription_to_telegram_channel(telegram_channel)
 
     async def save(self, telegram_user: TelegramUser) -> None:
         if await self.get_by_chat_id(telegram_user.chat_id):

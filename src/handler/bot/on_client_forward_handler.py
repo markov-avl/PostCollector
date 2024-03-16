@@ -58,6 +58,6 @@ class OnClientForwardHandler(BotEventHandler):
             )
             return
 
-        subscribers = await self._telegram_user_service.get_by_subscribtion_to_telegram_channel(telegram_channel)
+        subscribers = await self._telegram_user_service.get_by_subscription_to_telegram_channel(telegram_channel)
         for subscriber in subscribers:
             await self._telegram_bot.forward_message(subscriber.chat_id, message.chat.id, message.message_id)

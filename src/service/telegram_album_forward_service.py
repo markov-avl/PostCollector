@@ -37,7 +37,7 @@ class TelegramAlbumForwardService:
     async def _forward(self, from_telegram_channel: TelegramChannel, from_chat_id: int, media_group_id: str) -> None:
         await asyncio.sleep(self._album_forward_pause)
 
-        subscribers = await self._telegram_user_service.get_by_subscribtion_to_telegram_channel(from_telegram_channel)
+        subscribers = await self._telegram_user_service.get_by_subscription_to_telegram_channel(from_telegram_channel)
         if not subscribers:
             return
 

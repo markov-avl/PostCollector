@@ -6,9 +6,9 @@ from telethon.tl.types import UpdateChannel, Channel
 
 from src.telegram import TelegramClient, TelegramBot
 from src.service import TelegramChannelService, TelegramUserService
+from src.utility import SerializationUtility
 
 from .client_event_handler import ClientEventHandler
-from ...utility import SerializationUtility
 
 
 @component
@@ -44,6 +44,6 @@ class OnUpdateChannelHandler(ClientEventHandler):
         await self._telegram_channel_service.update(telegram_channel)
         logger.info(f"Successfully subscribed to {channel.id}")
 
-        subscribed_users = await self._telegram_user_service.get_by_subscribtion_to_telegram_channel(telegram_channel)
+        subscribed_users = await self._telegram_user_service.get_by_subscription_to_telegram_channel(telegram_channel)
         for user in subscribed_users:
-            await self._telegram_bot.send_message(user.chat_id, f"Ты успешно подписался на {channel.title}!")
+            await self._telegram_bot.send_message(user.chat_id, f"Подписка на «{channel.title}» успешно оформлена!")

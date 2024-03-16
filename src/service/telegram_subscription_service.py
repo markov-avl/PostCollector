@@ -27,3 +27,6 @@ class TelegramSubscriptionService:
         ):
             raise ValueError("Telegram subscription with such telegram chat and telegram channel IDs is already exist")
         await self._telegram_subscription_repository.save(telegram_subscription)
+
+    async def delete(self, telegram_subscription: TelegramSubscription) -> None:
+        await self._telegram_subscription_repository.remove(telegram_subscription)
