@@ -12,7 +12,7 @@ from .bot_event_handler import BotEventHandler
 
 
 @component
-class OnAcceptEdit(BotEventHandler):
+class OnAcceptEditHandler(BotEventHandler):
 
     def __init__(self,
                  telegram_user_service: TelegramUserService,

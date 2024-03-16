@@ -11,7 +11,7 @@ from .bot_event_handler import BotEventHandler
 
 
 @component
-class OnSubscribe(BotEventHandler):
+class OnSubscribeHandler(BotEventHandler):
 
     def __init__(self, telegram_user_service: TelegramUserService):
         self._telegram_user_service = telegram_user_service

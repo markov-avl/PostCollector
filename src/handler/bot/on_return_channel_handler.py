@@ -13,7 +13,7 @@ from .bot_event_handler import BotEventHandler
 
 
 @component
-class OnReturnChannel(BotEventHandler):
+class OnReturnChannelHandler(BotEventHandler):
 
     def __init__(self, telegram_user_service: TelegramUserService, telegram_channel_service: TelegramChannelService):
         self._telegram_user_service = telegram_user_service

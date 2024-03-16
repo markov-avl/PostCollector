@@ -13,7 +13,7 @@ from .bot_event_handler import BotEventHandler
 
 
 @component
-class OnRefresh(BotEventHandler):
+class OnRefreshHandler(BotEventHandler):
 
     def __init__(self, telegram_channel_service: TelegramChannelService, telegram_client: TelegramClient):
         self._telegram_channel_service = telegram_channel_service
