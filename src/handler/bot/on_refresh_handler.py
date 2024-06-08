@@ -4,6 +4,7 @@ from loguru import logger
 from puripy.decorator import component
 from telethon.tl.custom import Dialog
 
+from src.database.entity import TelegramChannel
 from src.telegram import TelegramClient
 from src.service import TelegramChannelService
 from src.utility import TelegramUtility
@@ -36,7 +37,7 @@ class OnRefreshHandler(BotEventHandler):
         dialogs = list(filter(lambda d: d.is_channel, await self._telegram_client.get_dialogs()))
 
         for channel in channels:
-            channel_dialog = self._find_dialog_by_chat_id(dialogs, channel.chat_id)
+            channel_dialog = self._find_dialog_by_channel(dialogs, channel)
 
             if channel_dialog is None:
                 continue
@@ -45,19 +46,28 @@ class OnRefreshHandler(BotEventHandler):
             await self._telegram_channel_service.update(channel)
 
     async def _unsubscribe_unused_channels(self) -> None:
-        channels = await self._telegram_channel_service.get_by_no_subscribers()
+        channels = await self._telegram_channel_service.get_all()
+        unused_channels = await self._telegram_channel_service.get_by_no_subscribers()
         dialogs = list(filter(lambda d: d.is_channel, await self._telegram_client.get_dialogs()))
 
-        for channel in channels:
-            channel_dialog = self._find_dialog_by_chat_id(dialogs, channel.chat_id)
+        for dialog in dialogs:
+            channel = self._find_channel_by_dialog(channels, dialog)
 
-            if channel_dialog is None:
+            if channel is None:
+                logger.debug("Unsubscribe from `{}` because of no information from DB", dialog.title)
+                # await self._telegram_client.delete_dialog(dialog.id)
                 continue
 
-            logger.debug("Unsubscribe from `{}` because of no subscribers", channel_dialog.title)
-            # await self._telegram_client.delete_dialog(channel_dialog.id)
-            # await self._telegram_channel_service.delete(channel)
+            if channel in unused_channels:
+                logger.debug("Unsubscribe from `{}` because of no subscribers", dialog.title)
+                # await self._telegram_client.delete_dialog(dialog.id)
+                # await self._telegram_channel_service.delete(channel)
 
     @staticmethod
-    def _find_dialog_by_chat_id(dialogs: list[Dialog], chat_id: int) -> Dialog | None:
-        return next(filter(lambda d: TelegramUtility.normialize_chat_id(d.id) == chat_id, dialogs), None)
+    def _find_dialog_by_channel(dialogs: list[Dialog], channel: TelegramChannel) -> Dialog | None:
+        return next(filter(lambda d: TelegramUtility.normialize_chat_id(d.id) == channel.chat_id, dialogs), None)
+
+    @staticmethod
+    def _find_channel_by_dialog(channels: list[TelegramChannel], dialog: Dialog) -> TelegramChannel | None:
+        chat_id = TelegramUtility.normialize_chat_id(dialog.id)
+        return next(filter(lambda c: c.chat_id == chat_id, channels), None)
