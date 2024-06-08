@@ -55,13 +55,13 @@ class OnRefreshHandler(BotEventHandler):
 
             if channel is None:
                 logger.debug("Unsubscribe from `{}` because of no information from DB", dialog.title)
-                # await self._telegram_client.delete_dialog(dialog.id)
+                await self._telegram_client.delete_dialog(dialog.id)
                 continue
 
             if channel in unused_channels:
                 logger.debug("Unsubscribe from `{}` because of no subscribers", dialog.title)
-                # await self._telegram_client.delete_dialog(dialog.id)
-                # await self._telegram_channel_service.delete(channel)
+                await self._telegram_client.delete_dialog(dialog.id)
+                await self._telegram_channel_service.delete(channel)
 
     @staticmethod
     def _find_dialog_by_channel(dialogs: list[Dialog], channel: TelegramChannel) -> Dialog | None:
