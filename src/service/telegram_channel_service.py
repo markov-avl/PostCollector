@@ -30,6 +30,9 @@ class TelegramChannelService:
     async def get_by_telegram_user_subscriptions(self, telegram_user: TelegramUser) -> list[TelegramChannel]:
         return await self._telegram_channel_repository.find_by_telegram_user_subscriptions(telegram_user)
 
+    async def get_by_no_subscribers(self) -> list[TelegramChannel]:
+        return await self._telegram_channel_repository.find_by_no_subscribers()
+
     async def save(self, telegram_channel: TelegramChannel) -> None:
         if await self.get_by_chat_id(telegram_channel.chat_id):
             raise ValueError("Telegram channel with such chat ID is already exist")
@@ -53,3 +56,6 @@ class TelegramChannelService:
 
     def clear_temporary_removes(self, telegram_user: TelegramUser) -> None:
         self._removed_subscriptions.pop(telegram_user.id, None)
+
+    async def delete(self, telegram_channel: TelegramChannel) -> None:
+        await self._telegram_channel_repository.remove(telegram_channel)

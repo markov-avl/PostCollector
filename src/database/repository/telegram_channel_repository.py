@@ -22,9 +22,17 @@ class TelegramChannelRepository(Repository[TelegramChannel]):
         return await self._fetch(statement)
 
     async def find_by_telegram_user_subscriptions(self, telegram_user: TelegramUser) -> list[TelegramChannel]:
+        # noinspection PyTypeChecker
         statement = (
             select(TelegramChannel)
             .join(TelegramSubscription)
             .where(TelegramSubscription.telegram_user == telegram_user)
+        )
+        return await self._fetch_all(statement)
+
+    async def find_by_no_subscribers(self) -> list[TelegramChannel]:
+        statement = (
+            select(TelegramChannel)
+            .outerjoin(TelegramSubscription)
         )
         return await self._fetch_all(statement)
