@@ -33,6 +33,7 @@ class TelegramChannelRepository(Repository[TelegramChannel]):
     async def find_by_no_subscribers(self) -> list[TelegramChannel]:
         statement = (
             select(TelegramChannel)
-            .outerjoin(TelegramSubscription)
+            .join(TelegramSubscription)
+            .where(TelegramSubscription.id.is_(None))
         )
         return await self._fetch_all(statement)
