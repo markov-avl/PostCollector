@@ -1,5 +1,5 @@
 database:
-  name: ${DATABASE_NAME:test}
+  name: ${DATABASE_NAME:develop}
   logging: ${DATABASE_LOGGING:false}
 
 telegram:
