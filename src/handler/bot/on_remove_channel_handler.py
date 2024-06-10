@@ -39,5 +39,5 @@ class OnRemoveChannelHandler(BotEventHandler):
 
         await callback_query.message.edit_text(
             text="Выберите каналы, от которых хотите отписаться",
-            reply_markup=MarkupFactory.edit_markup(subscribed_channels, channels_to_remove)
+            reply_markup=MarkupFactory.unsubscribe_markup(subscribed_channels, channels_to_remove)
         )

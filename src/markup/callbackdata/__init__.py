@@ -1,4 +1,4 @@
-from .accept_edit_callback_data import AcceptEditCallbackData
-from .cancel_edit_callback_data import CancelEditCallbackData
+from .accept_unsubscribe_callback_data import AcceptUnsubscribeCallbackData
+from .cancel_unsubscribe_callback_data import CancelUnsubscribeCallbackData
 from .remove_channel_callback_data import RemoveChannelCallbackData
 from .return_channel_callback_data import ReturnChannelCallbackData

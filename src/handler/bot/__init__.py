@@ -1,9 +1,9 @@
 from .bot_event_handler import BotEventHandler
 from .bot_handler_type import BotHandlerType
 
-from .on_accept_edit_handler import OnAcceptEditHandler
-from .on_cancel_edit_handler import OnCancelEditHandler
+from .on_accept_unsubscribe_handler import OnAcceptUnsubscribeHandler
 from .on_cancel_handler import OnCancelHandler
+from .on_cancel_unsubscribe_handler import OnCancelUnsubscribeHandler
 from .on_channel_selection_handler import OnChannelSelectionHandler
 from .on_client_forward_handler import OnClientForwardHandler
 from .on_edit_handler import OnEditHandler
@@ -12,3 +12,4 @@ from .on_remove_channel_handler import OnRemoveChannelHandler
 from .on_return_channel_handler import OnReturnChannelHandler
 from .on_start_handler import OnStartHandler
 from .on_subscribe_handler import OnSubscribeHandler
+from .on_unsubscribe_handler import OnUnsubscribeHandler
