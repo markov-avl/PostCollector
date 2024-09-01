@@ -65,9 +65,9 @@ class OnRefreshHandler(BotEventHandler):
 
     @staticmethod
     def _find_dialog_by_channel(dialogs: list[Dialog], channel: TelegramChannel) -> Dialog | None:
-        return next(filter(lambda d: TelegramUtility.normialize_chat_id(d.id) == channel.chat_id, dialogs), None)
+        return next(filter(lambda d: TelegramUtility.normalize_chat_id(d.id) == channel.chat_id, dialogs), None)
 
     @staticmethod
     def _find_channel_by_dialog(channels: list[TelegramChannel], dialog: Dialog) -> TelegramChannel | None:
-        chat_id = TelegramUtility.normialize_chat_id(dialog.id)
+        chat_id = TelegramUtility.normalize_chat_id(dialog.id)
         return next(filter(lambda c: c.chat_id == chat_id, channels), None)

@@ -34,6 +34,6 @@ class OnEditHandler(BotEventHandler):
             return
 
         await message.answer(
-            "Выберите, что хотите отредактировать у канала",
-            reply_markup=MarkupFactory.unsubscribe_markup(subscribed_channels, set())
+            "Выберите канал, который хотите отредактировать",
+            reply_markup=MarkupFactory.edit_markup(subscribed_channels)
         )
