@@ -1,2 +1,3 @@
 from .client_forward_filter import ClientForwardFilter
+from .select_channel_content_filter_filter import SelectChannelContentFilterFilter
 from .select_channel_filter import SelectChannelFilter

@@ -27,9 +27,9 @@ class OnCancelHandler(BotEventHandler):
 
         telegram_user = await self._telegram_user_service.get_by_chat_id_or_create(message.chat.id)
 
-        if telegram_user.state == TelegramUserState.CHANNEL_SELECTION:
+        if telegram_user.state != TelegramUserState.NORMAL:
             telegram_user.state = TelegramUserState.NORMAL
             await self._telegram_user_service.update(telegram_user)
-            await message.answer("Выбор канала отменен")
+            await message.answer("Интерактивный режим отключен")
         else:
-            await message.answer("Режим выбора канала и так был отключен")
+            await message.answer("Интерактивный режим и так был отключен")

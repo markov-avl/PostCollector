@@ -43,7 +43,7 @@ class OnClientForwardHandler(BotEventHandler):
     async def handle(self, message: types.Message) -> None:
         logger.debug("Client forward: {}", SerializationUtility.try_to_json(message))
 
-        forward_chat_id = TelegramUtility.normialize_chat_id(message.forward_from_chat.id)
+        forward_chat_id = TelegramUtility.normalize_chat_id(message.forward_from_chat.id)
 
         telegram_channel = await self._telegram_channel_service.get_by_chat_id(forward_chat_id)
         if not telegram_channel:

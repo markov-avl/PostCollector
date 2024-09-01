@@ -1,5 +1,5 @@
 from aiogram.filters.callback_data import CallbackData
 
 
-class RemoveChannelCallbackData(CallbackData, prefix="removechannel"):
+class EditChannelCallbackData(CallbackData, prefix="editchannel"):
     chat_id: int

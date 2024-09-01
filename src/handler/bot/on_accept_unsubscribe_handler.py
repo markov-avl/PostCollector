@@ -35,7 +35,7 @@ class OnAcceptUnsubscribeHandler(BotEventHandler):
         channels_to_remove = self._telegram_channel_service.get_temporary_removes(telegram_user)
 
         if not channels_to_remove:
-            await callback_query.message.edit_text(text="Ни один канал не был выбран")
+            await callback_query.message.edit_text("Ни один канал не был выбран")
             return
 
         subscribed_channels = await self._telegram_channel_service.get_by_telegram_user_subscriptions(telegram_user)
@@ -51,6 +51,6 @@ class OnAcceptUnsubscribeHandler(BotEventHandler):
         unsubscribed_channel_names = ', '.join(f'«{channel.name}»' for channel in unsubscribed_channels)
 
         if unsubscribed_channel_names:
-            await callback_query.message.edit_text(text=f"Вы успешно отписались от {unsubscribed_channel_names}")
+            await callback_query.message.edit_text(f"Вы успешно отписались от {unsubscribed_channel_names}")
         else:
-            await callback_query.message.edit_text(text="Вы и так не были подписаны на выбранные каналы")
+            await callback_query.message.edit_text("Вы и так не были подписаны на выбранные каналы")

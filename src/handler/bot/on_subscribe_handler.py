@@ -29,4 +29,7 @@ class OnSubscribeHandler(BotEventHandler):
         telegram_user.state = TelegramUserState.CHANNEL_SELECTION
         await self._telegram_user_service.update(telegram_user)
 
-        await message.answer("Отправьте ссылку, приглашение или @channelname канала, на который нужно подписаться")
+        await message.answer(
+            "Отправьте ссылку, приглашение или @channelname канала, на который нужно подписаться\n\n"
+            "\\cancel - отменить"
+        )

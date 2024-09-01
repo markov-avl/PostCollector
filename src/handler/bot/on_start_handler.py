@@ -14,17 +14,18 @@ from .bot_event_handler import BotEventHandler
 @component
 class OnStartHandler(BotEventHandler):
     MESSAGE = """
-            %s!
+        %s!
 
-            Я умею собирать новости из списка твоих каналов в одно место: в текущий чат.
+        Я умею собирать новости из списка твоих каналов в одно место: в текущий чат.
 
-            Нужно лишь указать, какие каналы мне нужно слушать, и я буду оттуда пересылать тебе новости.
-            
-            Мои команды:
-            /subscribe - перейти в режим выбора канала
-            /cancel - отменить режим выбора канала
-            /unsubscribe - отредактировать список текущих подписок
-        """
+        Нужно лишь указать, какие каналы мне нужно слушать, и я буду оттуда пересылать тебе новости.
+        
+        Мои команды:
+        /subscribe - подписаться на канал
+        /unsubscribe - отредактировать список текущих подписок
+        /edit - отредактировать подписку на канал
+        /cancel - отменить интерактивный режим
+    """
 
     def __init__(self, telegram_user_service: TelegramUserService):
         self._telegram_user_service = telegram_user_service
@@ -39,11 +40,14 @@ class OnStartHandler(BotEventHandler):
         logger.debug("StartCommand from {}", message.from_user.username)
 
         if await self._telegram_user_service.get_by_chat_id(message.chat.id):
-            answer = TextUtility.remove_indents(self.MESSAGE) % "Еще раз привет"
+            answer = self._get_message(False)
         else:
             telegram_user = TelegramUser()
             telegram_user.chat_id = message.chat.id
             await self._telegram_user_service.save(telegram_user)
-            answer = TextUtility.remove_indents(self.MESSAGE) % "Привет"
+            answer = self._get_message(True)
 
-        await message.answer(text=answer)
+        await message.answer(answer)
+
+    def _get_message(self, is_new_user: bool) -> str:
+        return TextUtility.remove_indents(self.MESSAGE) % ("Привет" if is_new_user else "Еще раз привет")

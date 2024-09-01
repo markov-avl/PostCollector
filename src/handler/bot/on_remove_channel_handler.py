@@ -10,6 +10,7 @@ from src.service import TelegramUserService, TelegramChannelService
 
 from .bot_handler_type import BotHandlerType
 from .bot_event_handler import BotEventHandler
+from ...database.entity import TelegramChannel
 
 
 @component
@@ -31,13 +32,17 @@ class OnRemoveChannelHandler(BotEventHandler):
         telegram_user = await self._telegram_user_service.get_by_chat_id(callback_query.message.chat.id)
         subscribed_channels = await self._telegram_channel_service.get_by_telegram_user_subscriptions(telegram_user)
 
-        telegram_channel_to_remove = next(filter(lambda c: c.id == callback_data.channel_id, subscribed_channels), None)
+        telegram_channel_to_remove = self._find_by_chat_id(subscribed_channels, callback_data.chat_id)
         if telegram_channel_to_remove:
             self._telegram_channel_service.temporary_remove(telegram_user, telegram_channel_to_remove)
 
         channels_to_remove = self._telegram_channel_service.get_temporary_removes(telegram_user)
 
         await callback_query.message.edit_text(
-            text="Выберите каналы, от которых хотите отписаться",
+            "Выберите каналы, от которых хотите отписаться",
             reply_markup=MarkupFactory.unsubscribe_markup(subscribed_channels, channels_to_remove)
         )
+
+    @staticmethod
+    def _find_by_chat_id(channels: list[TelegramChannel], chat_id: int) -> TelegramChannel | None:
+        return next(filter(lambda c: c.chat_id == chat_id, channels), None)
