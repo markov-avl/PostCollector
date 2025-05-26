@@ -1,32 +1,33 @@
 from .content_filter import ContentFilter
 
-from src.content.metric import ContentMetric, HasHashtagsMetric, HasLinksMetric, HasVideoMetric
+from src.content.criteria import ContentCriteria, HashtagsCriteria, LinksCriteria, VideoCriteria
 
 
 class ContentFilterParser:
+    CRITERIA = {HashtagsCriteria, LinksCriteria, VideoCriteria}
 
     @classmethod
     def parse(cls, query: str) -> ContentFilter:
-        content_metrics = cls.parse_content_metrics(query)
+        content_criteria = cls.parse_content_criteria(query)
 
         pattern = query.replace(' ', '')
-        for _, match, _ in content_metrics:
+        for _, match, _ in content_criteria:
             pattern = pattern.replace(match, '?', 1)
 
-        cls.check_query_pattern(pattern)
+        cls.validate_query_pattern(pattern)
 
-        return ContentFilter(pattern, [cm for _, _, cm in content_metrics])
+        return ContentFilter(pattern, [cc for _, _, cc in content_criteria])
 
     @classmethod
-    def parse_content_metrics(cls, query: str) -> list[ContentMetric]:
+    def parse_content_criteria(cls, query: str) -> list[tuple[int, str, ContentCriteria]]:
         return sorted([
-            *HasHashtagsMetric.find(query),
-            *HasLinksMetric.find(query),
-            *HasVideoMetric.find(query)
+            *HashtagsCriteria.find(query),
+            *LinksCriteria.find(query),
+            *VideoCriteria.find(query)
         ], key=lambda cm: cm[0])
 
     @classmethod
-    def check_query_pattern(cls, pattern: str) -> None:
+    def validate_query_pattern(cls, pattern: str) -> None:
         code = pattern \
             .replace('!', ' not ') \
             .replace('|', ' or ') \

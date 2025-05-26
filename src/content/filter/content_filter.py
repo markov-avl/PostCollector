@@ -1,15 +1,15 @@
-from src.content.metric import ContentMetric
+from src.content.criteria import ContentCriteria
 
 
 class ContentFilter:
 
-    def __init__(self, pattern: str, metrics: list[ContentMetric]):
+    def __init__(self, pattern: str, criteria: list[ContentCriteria]):
         self._pattern = pattern
-        self._metrics = metrics
+        self._criteria = criteria
 
     def to_executable(self) -> str:
         executable = self._pattern
-        for metric in self._metrics:
+        for metric in self._criteria:
             executable = executable.replace('?', metric.to_executable(), 1)
 
         return executable \
@@ -19,8 +19,8 @@ class ContentFilter:
 
     def to_query(self) -> str:
         query = self._pattern
-        for metric in self._metrics:
-            query = query.replace('?', metric.to_query(), 1)
+        for criteria in self._criteria:
+            query = query.replace('?', criteria.to_query(), 1)
 
         return query \
             .replace('|', ' | ') \

@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from typing import Iterator
 
 
-class ContentMetric(ABC):
+class ContentCriteria(ABC):
 
     @classmethod
     @abstractmethod
@@ -21,14 +21,14 @@ class ContentMetric(ABC):
         ...
 
     @classmethod
-    def find(cls, query: str) -> Iterator[tuple[int, str, ContentMetric]]:
+    def find(cls, query: str) -> Iterator[tuple[int, str, ContentCriteria]]:
         for match in cls._find_iter(query):
-            metric = cls._from_match(match)
-            yield cls._with_match_info(match, metric)
+            criteria = cls._from_match(match)
+            yield cls._with_match_info(match, criteria)
 
     @classmethod
     @abstractmethod
-    def _from_match(cls, match: re.Match[str]) -> ContentMetric:
+    def _from_match(cls, match: re.Match[str]) -> ContentCriteria:
         ...
 
     @classmethod
@@ -36,7 +36,7 @@ class ContentMetric(ABC):
         return re.finditer(cls.regex(), query.replace(' ', ''))
 
     @classmethod
-    def _with_match_info(cls, match: re.Match[str], content_metric: ContentMetric) -> tuple[int, str, ContentMetric]:
+    def _with_match_info(cls, match: re.Match[str], content_metric: ContentCriteria) -> tuple[int, str, ContentCriteria]:
         return match.span(0)[0], match.group(0), content_metric
 
     def __repr__(self):

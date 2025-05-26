@@ -7,3 +7,4 @@ pydantic~=2.5.3
 aiosqlite~=0.20.0
 aiogram~=3.4.1
 loguru~=0.7.2
+puripy~=0.0.1
