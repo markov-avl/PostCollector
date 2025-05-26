@@ -8,14 +8,18 @@ from .content_criteria import ContentCriteria
 class VideoCriteria(ContentCriteria):
 
     @classmethod
-    def regex(cls) -> re.Pattern[str]:
-        return re.compile(r'video')
+    def name(cls) -> str:
+        return "video"
 
-    def to_executable(self) -> str:
-        return 'video()'
+    @classmethod
+    def regex(cls) -> re.Pattern[str]:
+        return re.compile(cls.name() + r'\(\)')
+
+    def to_evaluatable(self) -> str:
+        return f"{self.name()}()"
 
     def to_query(self) -> str:
-        return 'video'
+        return f"{self.name()}()"
 
     @classmethod
     def _from_match(cls, match: re.Match[str]) -> VideoCriteria:

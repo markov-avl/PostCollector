@@ -45,7 +45,7 @@ class OnChannelContentFilterSelectionHandler(BotEventHandler):
         telegram_subscription = await self._telegram_subscription_service \
             .get_by_telegram_user_and_telegram_channel(telegram_user, telegram_channel)
 
-        telegram_subscription.content_filter_executable = content_filter.to_executable()
+        telegram_subscription.content_filter_evaluatable = content_filter.to_evaluatable()
         telegram_subscription.content_filter_query = content_filter.to_query()
         await self._telegram_subscription_service.update(telegram_subscription)
 

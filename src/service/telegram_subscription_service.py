@@ -13,6 +13,9 @@ class TelegramSubscriptionService:
     async def get_all(self) -> list[TelegramSubscription]:
         return await self._telegram_subscription_repository.find_all()
 
+    async def get_by_telegram_channel(self, telegram_channel: TelegramChannel) -> list[TelegramSubscription]:
+        return await self._telegram_subscription_repository.find_by_telegram_channel(telegram_channel)
+
     async def get_by_telegram_user_and_telegram_channel(self,
                                                         telegram_user: TelegramUser,
                                                         telegram_channel: TelegramChannel) \

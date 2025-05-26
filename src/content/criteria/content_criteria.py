@@ -9,11 +9,16 @@ class ContentCriteria(ABC):
 
     @classmethod
     @abstractmethod
+    def name(cls) -> str:
+        ...
+
+    @classmethod
+    @abstractmethod
     def regex(cls) -> re.Pattern[str]:
         ...
 
     @abstractmethod
-    def to_executable(self) -> str:
+    def to_evaluatable(self) -> str:
         ...
 
     @abstractmethod
@@ -36,8 +41,10 @@ class ContentCriteria(ABC):
         return re.finditer(cls.regex(), query.replace(' ', ''))
 
     @classmethod
-    def _with_match_info(cls, match: re.Match[str], content_metric: ContentCriteria) -> tuple[int, str, ContentCriteria]:
+    def _with_match_info(cls,
+                         match: re.Match[str],
+                         content_metric: ContentCriteria) -> tuple[int, str, ContentCriteria]:
         return match.span(0)[0], match.group(0), content_metric
 
     def __repr__(self):
-        return self.to_executable()
+        return self.to_query()

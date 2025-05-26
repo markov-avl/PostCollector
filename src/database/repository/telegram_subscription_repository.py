@@ -13,6 +13,13 @@ class TelegramSubscriptionRepository(Repository[TelegramSubscription]):
     def __init__(self, driver: Driver):
         super().__init__(driver, TelegramSubscription)
 
+    async def find_by_telegram_channel(self, telegram_channel: TelegramChannel) -> list[TelegramSubscription]:
+        statement = (
+            select(TelegramSubscription)
+            .where(TelegramSubscription.telegram_channel == telegram_channel)
+        )
+        return await self._fetch_all(statement)
+
     async def find_by_telegram_user_and_telegram_channel(self,
                                                          telegram_user: TelegramUser,
                                                          telegram_channel: TelegramChannel) \

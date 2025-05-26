@@ -13,6 +13,7 @@ from .on_client_forward_handler import OnClientForwardHandler
 from .on_edit_channel_handler import OnEditChannelHandler
 from .on_edit_handler import OnEditHandler
 from .on_refresh_handler import OnRefreshHandler
+from .on_remove_channel_content_filter_handler import OnRemoveChannelContentFilterHandler
 from .on_remove_channel_handler import OnRemoveChannelHandler
 from .on_return_channel_handler import OnReturnChannelHandler
 from .on_start_handler import OnStartHandler

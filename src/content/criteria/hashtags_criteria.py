@@ -11,15 +11,19 @@ class HashtagsCriteria(ContentCriteria):
         self._hashtags = hashtags
 
     @classmethod
-    def regex(cls) -> re.Pattern[str]:
-        return re.compile(r'hashtags\(([\wа-яА-ЯЁё,]+)\)')
+    def name(cls) -> str:
+        return "hashtags"
 
-    def to_executable(self) -> str:
+    @classmethod
+    def regex(cls) -> re.Pattern[str]:
+        return re.compile(cls.name() + r'\(([\wа-яА-ЯЁё,]+)\)')
+
+    def to_evaluatable(self) -> str:
         params = [f'"{h}"' for h in self._hashtags]
-        return f'hashtags({', '.join(params)})'
+        return f"{self.name()}({', '.join(params)})"
 
     def to_query(self) -> str:
-        return f'hashtags({', '.join(self._hashtags)})'
+        return f"{self.name()}({', '.join(self._hashtags)})"
 
     @classmethod
     def _from_match(cls, match: re.Match[str]) -> HashtagsCriteria:

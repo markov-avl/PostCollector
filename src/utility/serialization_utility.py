@@ -11,7 +11,7 @@ from loguru import logger
 class SerializationUtility:
 
     @staticmethod
-    def shoud_be_serializeable(member: tuple[str, Any]) -> bool:
+    def should_be_serializable(member: tuple[str, Any]) -> bool:
         key, value = member
         return not key.startswith("_") and \
             not key[0].isupper() and \
@@ -42,8 +42,8 @@ class SerializationUtility:
         else:
             seen.append(obj)
 
-        # if obj is some sctructure
-        members = filter(SerializationUtility.shoud_be_serializeable, inspect.getmembers(obj))
+        # if obj is some structure
+        members = filter(SerializationUtility.should_be_serializable, inspect.getmembers(obj))
         return {k: SerializationUtility.serialize(v, seen) for k, v in members}
 
     @staticmethod

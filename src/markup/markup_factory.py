@@ -68,10 +68,10 @@ class MarkupFactory:
                 callback_data=AddChannelContentFilterCallbackData(chat_id=subscription.telegram_channel.chat_id)
             )
         else:
-            builder.button(
-                text="✏️ Изменить фильтр",
-                callback_data=EditChannelContentFilterCallbackData(chat_id=subscription.telegram_channel.chat_id)
-            )
+            # builder.button(
+            #     text="✏️ Изменить фильтр",
+            #     callback_data=EditChannelContentFilterCallbackData(chat_id=subscription.telegram_channel.chat_id)
+            # )
             builder.button(
                 text="🧼 Удалить фильтр",
                 callback_data=RemoveChannelContentFilterCallbackData(chat_id=subscription.telegram_channel.chat_id)

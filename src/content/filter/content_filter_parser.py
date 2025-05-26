@@ -4,7 +4,7 @@ from src.content.criteria import ContentCriteria, HashtagsCriteria, LinksCriteri
 
 
 class ContentFilterParser:
-    CRITERIA = {HashtagsCriteria, LinksCriteria, VideoCriteria}
+    VALID_QUERY_CHARS = ("!", "|", "&", "?", "(", ")", " ")
 
     @classmethod
     def parse(cls, query: str) -> ContentFilter:
@@ -21,19 +21,22 @@ class ContentFilterParser:
     @classmethod
     def parse_content_criteria(cls, query: str) -> list[tuple[int, str, ContentCriteria]]:
         return sorted([
-            *HashtagsCriteria.find(query),
             *LinksCriteria.find(query),
-            *VideoCriteria.find(query)
-        ], key=lambda cm: cm[0])
+            # *HashtagsCriteria.find(query),
+            # *VideoCriteria.find(query)
+        ], key=lambda c: c[0])
 
     @classmethod
     def validate_query_pattern(cls, pattern: str) -> None:
+        if not all(c in cls.VALID_QUERY_CHARS for c in pattern):
+            raise SyntaxError("Invalid character(s) in query")
+
         code = pattern \
             .replace('!', ' not ') \
             .replace('|', ' or ') \
             .replace('&', ' and ') \
-            .replace('?', 'True')
+            .replace('?', '1')
         try:
             eval(code)
         except SyntaxError:
-            raise SyntaxError('Invalid query syntax')
+            raise SyntaxError("Invalid query syntax")

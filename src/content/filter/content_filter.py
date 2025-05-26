@@ -7,12 +7,12 @@ class ContentFilter:
         self._pattern = pattern
         self._criteria = criteria
 
-    def to_executable(self) -> str:
-        executable = self._pattern
-        for metric in self._criteria:
-            executable = executable.replace('?', metric.to_executable(), 1)
+    def to_evaluatable(self) -> str:
+        evaluatable = self._pattern
+        for criteria in self._criteria:
+            evaluatable = evaluatable.replace('?', criteria.to_evaluatable(), 1)
 
-        return executable \
+        return evaluatable \
             .replace('!', 'not ') \
             .replace('|', ' or ') \
             .replace('&', ' and ')

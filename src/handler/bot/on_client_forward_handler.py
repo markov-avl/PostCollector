@@ -3,33 +3,32 @@ from aiogram.filters import Filter
 from loguru import logger
 from puripy.decorator import component
 
+from src.filter import ClientForwardFilter
 from src.service import (TelegramUserService,
                          TelegramChannelService,
                          TelegramAlbumForwardService,
-                         TelegramSubscriptionService)
-from src.filter import ClientForwardFilter
+                         ContentFilteringService)
 from src.telegram import TelegramBot, TelegramClient
 from src.utility import TelegramUtility, SerializationUtility
-
-from .bot_handler_type import BotHandlerType
 from .bot_event_handler import BotEventHandler
+from .bot_handler_type import BotHandlerType
 
 
 @component
 class OnClientForwardHandler(BotEventHandler):
 
     def __init__(self,
+                 content_filtering_service: ContentFilteringService,
                  telegram_user_service: TelegramUserService,
                  telegram_channel_service: TelegramChannelService,
                  telegram_forwarded_album_service: TelegramAlbumForwardService,
-                 telegram_subscription_service: TelegramSubscriptionService,
                  telegram_bot: TelegramBot,
                  telegram_client: TelegramClient,
                  client_forward_filter: ClientForwardFilter):
+        self._content_filtering_service = content_filtering_service
         self._telegram_user_service = telegram_user_service
         self._telegram_channel_service = telegram_channel_service
         self._telegram_forwarded_album_service = telegram_forwarded_album_service
-        self._telegram_subscription_service = telegram_subscription_service
         self._telegram_bot = telegram_bot
         self._telegram_client = telegram_client
         self._client_forward_filter = client_forward_filter
@@ -58,6 +57,6 @@ class OnClientForwardHandler(BotEventHandler):
             )
             return
 
-        subscribers = await self._telegram_user_service.get_by_subscription_to_telegram_channel(telegram_channel)
+        subscribers = await self._content_filtering_service.filter_subscribers(message, telegram_channel)
         for subscriber in subscribers:
             await self._telegram_bot.forward_message(subscriber.chat_id, message.chat.id, message.message_id)

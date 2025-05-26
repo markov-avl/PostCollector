@@ -31,5 +31,5 @@ class OnSubscribeHandler(BotEventHandler):
 
         await message.answer(
             "Отправьте ссылку, приглашение или @channelname канала, на который нужно подписаться\n\n"
-            "\\cancel - отменить"
+            "/cancel - отменить"
         )

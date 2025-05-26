@@ -42,7 +42,7 @@ class OnIncomingMessageHandler(ClientEventHandler):
         try:
             bot = await self._telegram_client.get_entity(self._telegram_bot.id)
         except ValueError:
-            logger.error("Couldn't get bot. Maybe chat with bot is deleted or archieved")
+            logger.error("Couldn't get bot. Maybe chat with bot is deleted or archived")
             return
 
         try:
